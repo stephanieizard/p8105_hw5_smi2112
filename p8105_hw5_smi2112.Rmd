@@ -58,14 +58,34 @@ About the raw data:
 homicide_data <- homicide_data %>% 
   unite(city_state, city:state, sep = ", ", remove = FALSE) %>% 
   mutate(case_status = if_else(disposition == "Closed without arrest", "unsolved", 
-                               if_else(disposition == "Open/No arrest", "unsolved", "solved")))
+                               if_else(disposition == "Open/No arrest", "unsolved", "solved"))) %>% 
+  group_by(city_state) %>% 
+  nest()
 
 homicide_data %>% 
   mutate(city_state = as.factor(city_state)) %>% 
   group_by(city_state) %>% 
-  summarize("Total homicides" = n()) %>% 
+  summarize("Total homicides" = n(), 
+            "Unsolved cases" = count(case_status == "unsolved")) %>% 
   rename("City" = city_state) %>% 
   knitr::kable()
 ```
+
+####Looking into the city of Baltimore, MD
+
+```{r}
+homicide_data %>% 
+  filter(city_state == "Baltimore, MD")
+  prop.test(case_status) %>% 
+    broom::tidy() %>% 
+    select()
+
+
+
+```
+
+
+
+
 
 
