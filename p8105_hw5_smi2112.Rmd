@@ -62,7 +62,6 @@ ppt_info %>%
 
 ```
 
-
 Comments: (on difference over time)
 
 ##Problem 2
@@ -73,24 +72,40 @@ Comments: (on difference over time)
 homicide_data <- read_csv("./data/homicide-data.csv") 
 ```
 
-About the raw data:
+About the raw data: (describe some stuff here)
 
-####Creating a variables and nesting data
+####Creating variables and nesting data
 
 ```{r}
-homicide_data_nest <- homicide_data %>% 
+homicide_data <- homicide_data %>% 
   unite(city_state, city:state, sep = ", ", remove = FALSE) %>% 
   mutate(case_status = if_else(disposition == "Closed without arrest", "unsolved", 
                                if_else(disposition == "Open/No arrest", "unsolved", "solved"))) %>% 
+  mutate(city_state = recode(city_state, "Tulsa, AL" = "Tulsa, OK")) %>% 
   group_by(city_state) %>% 
   nest()
 ```
 
 ####Summarizing total and unsolved homicides
+
 ```{r}
+homicide_data_total <- homicide_data %>% 
+  unnest() %>% 
+  group_by(city_state) %>% 
+  summarize(total_cases = n())
 
+homicide_data_unsolved <- homicide_data %>% 
+  unnest() %>% 
+  filter(case_status == "unsolved") %>% 
+  group_by(city_state) %>% 
+  summarize(total_unsolved = n())
+
+inner_join(homicide_data_total, homicide_data_unsolved, by = "city_state") %>% 
+  rename("City" = city_state,
+         "Total Homicides" = total_cases,
+         "Unsolved Homicides" = total_unsolved) %>% 
+  knitr::kable()
 ```
-
 
 ####Baltimore, MD: Proportion of unsolved homicides
 
@@ -103,5 +118,9 @@ homicide_data_nest <- homicide_data %>%
 
 ####Plotting estimates and CIs for each city
 
+```{r}
+
+
+```
 
 
