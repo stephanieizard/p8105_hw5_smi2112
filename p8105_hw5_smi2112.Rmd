@@ -13,26 +13,59 @@ library(rvest)
 
 ##Problem 1
 
-#####Creating dataframe:
-* Step 1: Creating a dataframe containing all file names
+####Creating dataframe:
+* Step 1: Creating a string containing all file names
 
 ```{r}
-file_names <- data.frame(file_name = list.files(path = "./data/"))
+file_names <- list.files(path = "./data/q1/", full.names = TRUE)
 ```
 
 * Step 2: Iterating over file names, reading in data for each subject
 
 ```{r}
+read_ppt_info <- function(file_names) {
+  z = read_csv(file_names)
+  z
+}
 
-
+ppt_info <- file_names %>% 
+  tibble(file_name = .) %>% 
+  group_by(file_name) %>% 
+  nest() %>% 
+  mutate(data = map(.$file_name, read_ppt_info))
 ```
 
 * Step 3: Tidying the result
 
 ```{r}
+ppt_info
 
+```
 
+##Problem 2
 
+####Reading in the raw homicide data from the Washington Post
+
+```{r}
+homicide_data <- read_csv("./data/homicide-data.csv") 
+```
+
+About the raw data:
+
+####Creating a city_state variable and summarizing within cities
+
+```{r}
+homicide_data <- homicide_data %>% 
+  unite(city_state, city:state, sep = ", ", remove = FALSE) %>% 
+  mutate(case_status = if_else(disposition == "Closed without arrest", "unsolved", 
+                               if_else(disposition == "Open/No arrest", "unsolved", "solved")))
+
+homicide_data %>% 
+  mutate(city_state = as.factor(city_state)) %>% 
+  group_by(city_state) %>% 
+  summarize("Total homicides" = n()) %>% 
+  rename("City" = city_state) %>% 
+  knitr::kable()
 ```
 
 
