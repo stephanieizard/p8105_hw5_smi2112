@@ -11,4 +11,28 @@ library(tidyverse)
 library(rvest)
 ```
 
+##Problem 1
+
+#####Creating dataframe:
+* Step 1: Creating a dataframe containing all file names
+
+```{r}
+file_names <- data.frame(list.files(path = "./data/"))
+```
+
+* Step 2: Iterating over file names, reading in data for each subject
+
+```{r}
+
+
+```
+
+* Step 3: Tidying the result
+
+```{r}
+
+
+
+```
+
 
