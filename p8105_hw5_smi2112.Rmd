@@ -8,7 +8,6 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
-library(rvest)
 ```
 
 ##Problem 1
@@ -32,15 +31,39 @@ ppt_info <- file_names %>%
   tibble(file_name = .) %>% 
   group_by(file_name) %>% 
   nest() %>% 
-  mutate(data = map(.$file_name, read_ppt_info))
+  mutate(data = map(.$file_name, read_ppt_info)) %>% 
+  unnest()
 ```
 
 * Step 3: Tidying the result
 
 ```{r}
-ppt_info
+ppt_info <- ppt_info %>% 
+  mutate(file_name = str_replace(file_name, "./data/q1/", ""),
+         file_name = str_replace(file_name, ".csv", "")) %>% 
+  rename(ppt_id = file_name) %>% 
+  mutate(ppt_unique_id = c(1:20)) %>% 
+  gather(key = "week", value = "measure", week_1:week_8) %>% 
+  mutate(week = str_replace(week, ".*_", ""))
+```
+
+#####Spaghetti plot 
+
+```{r}
+ppt_info %>% 
+  mutate(week = as.numeric(week)) %>%
+  separate(col = ppt_id, into = c("treatment", "number"), by = "_") %>% 
+  group_by(treatment, ppt_unique_id) %>% 
+  ggplot(aes(x = week, y = measure, group = ppt_unique_id, color = treatment)) +
+    geom_line() +
+    labs(x = "Week", y = "Measure", title = "Participant observations over time") + 
+    viridis::scale_color_viridis(option = "cividis", name = "Treatment group", discrete = TRUE, label = c("Control", "Experimental")) +
+    theme_bw()
 
 ```
+
+
+Comments: (on difference over time)
 
 ##Problem 2
 
@@ -52,40 +75,33 @@ homicide_data <- read_csv("./data/homicide-data.csv")
 
 About the raw data:
 
-####Creating a city_state variable and summarizing within cities
+####Creating a variables and nesting data
 
 ```{r}
-homicide_data <- homicide_data %>% 
+homicide_data_nest <- homicide_data %>% 
   unite(city_state, city:state, sep = ", ", remove = FALSE) %>% 
   mutate(case_status = if_else(disposition == "Closed without arrest", "unsolved", 
                                if_else(disposition == "Open/No arrest", "unsolved", "solved"))) %>% 
   group_by(city_state) %>% 
   nest()
-
-homicide_data %>% 
-  mutate(city_state = as.factor(city_state)) %>% 
-  group_by(city_state) %>% 
-  summarize("Total homicides" = n(), 
-            "Unsolved cases" = count(case_status == "unsolved")) %>% 
-  rename("City" = city_state) %>% 
-  knitr::kable()
 ```
 
-####Looking into the city of Baltimore, MD
+####Summarizing total and unsolved homicides
+```{r}
+
+```
+
+
+####Baltimore, MD: Proportion of unsolved homicides
 
 ```{r}
-homicide_data %>% 
-  filter(city_state == "Baltimore, MD")
-  prop.test(case_status) %>% 
-    broom::tidy() %>% 
-    select()
 
 
 
 ```
 
 
-
+####Plotting estimates and CIs for each city
 
 
 
