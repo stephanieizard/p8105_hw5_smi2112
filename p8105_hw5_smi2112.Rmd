@@ -112,8 +112,8 @@ inner_join(homicide_data_total, homicide_data_unsolved, by = "city_state") %>%
 ```{r}
 md_only <- homicide_data %>% 
   unnest() %>% 
-  filter(city_state == "Baltimore, MD") %>% 
-  mutate(case_status = recode(case_status, "unsolved" = 0, "solved" = 1))
+  filter(city_state == "Baltimore, MD")
+
 
 prop_test <- prop.test(table(md_only$case_status))
 
