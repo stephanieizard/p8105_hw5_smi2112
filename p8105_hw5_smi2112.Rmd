@@ -75,7 +75,7 @@ homicide_data <- read_csv("./data/q2/homicide-data.csv")
 
 Homicide information was collected across 50 large U.S. cities by the Washington Post, and was made available through their Github repository [here](https://github.com/washingtonpost/data-homicides). The raw data contains information for `r homicide_data %>% nrow()` homicides. Currently, the raw data appears to include `r homicide_data %>% select(city, state) %>%  group_by(city, state) %>% n_distinct()` cities, so some investigation will have to be done into this error.
 
-####Creating variables and nesting data
+####Cleaning data, creating city_state variable, nesting data
 
 ```{r}
 homicide_data_nest <- homicide_data %>% 
@@ -86,6 +86,8 @@ homicide_data_nest <- homicide_data %>%
   group_by(city_state) %>% 
   nest()
 ```
+
+The city_state variable was created using both city and state information. Tulsa, AL was identified as the error described above, and was changed to Tulsa, OK.
 
 ####Summarizing total and unsolved homicides
 
