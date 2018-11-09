@@ -50,7 +50,7 @@ ppt_info <- ppt_info %>%
 
 The final tidy data contains subject ID, arm, and observations over time. First, file names were manipulated to only include the treatment arm information and participant ID information. The file name column was then duplicated and used to derive participant ID (1-10), and treatment arm (con or exp). Observations over time were recorded as week and measure. File name was not dropped completely becuase it is used to identify unique participants.
 
-#####Spaghetti plot 
+####Spaghetti plot:
 
 ```{r}
 ppt_info %>% 
@@ -67,7 +67,7 @@ Comments: From the above spaghetti plot, we can see that both groups start with 
 
 ##Problem 2
 
-####Reading in raw homicide data from the Washington Post
+####Reading in raw homicide data from the Washington Post:
 
 ```{r}
 homicide_data <- read_csv("./data/q2/homicide-data.csv") 
@@ -75,7 +75,7 @@ homicide_data <- read_csv("./data/q2/homicide-data.csv")
 
 Homicide information was collected across 50 large U.S. cities by the Washington Post, and was made available through their Github repository [here](https://github.com/washingtonpost/data-homicides). The raw data contains information for `r homicide_data %>% nrow()` homicides. Currently, the raw data appears to include `r homicide_data %>% select(city, state) %>%  group_by(city, state) %>% n_distinct()` cities, so some investigation will have to be done into this error.
 
-####Cleaning data, creating city_state variable, nesting data
+####Cleaning data, creating city_state variable, nesting data:
 
 ```{r}
 homicide_data_nest <- homicide_data %>% 
@@ -89,7 +89,7 @@ homicide_data_nest <- homicide_data %>%
 
 The city_state variable was created using both city and state information. Tulsa, AL was identified as the error described above, and was changed to Tulsa, OK.
 
-####Summarizing total and unsolved homicides
+####Summarizing total and unsolved homicides:
 
 ```{r}
 homicide_data_total <- homicide_data_nest %>% 
@@ -112,7 +112,7 @@ homicide_data %>%
   knitr::kable()
 ```
 
-####Proportion of unsolved homicides for Baltimore, MD
+####Proportion of unsolved homicides for Baltimore, MD:
 
 ```{r}
 md_only <- homicide_data_nest %>% 
@@ -131,7 +131,7 @@ prop_test %>%
   knitr::kable()
 ```
 
-####Proportion of unsolved homicides for every city
+####Proportion of unsolved homicides for every city:
 
 ```{r}
 city_nest <- homicide_data %>% 
@@ -160,13 +160,13 @@ city_unsolved_cases %>%
   knitr::kable()
 ```
 
-####Plotting estimates and CIs for each city
+####Plotting estimates and CIs for each city:
 
 ```{r, fig.height = 9, fig.width = 9}
 city_unsolved_cases %>% 
   mutate(city_state = fct_reorder(city_state, estimate)) %>% 
   ggplot(aes(x = city_state, y = estimate)) +
-    geom_point() +
+    geom_point(color = "darkslateblue") +
     geom_errorbar(aes(ymax = conf.high, ymin = conf.low)) +
     labs(x = "City, State", 
          y = "Proportion of Unsolved Homicides", 
@@ -175,13 +175,4 @@ city_unsolved_cases %>%
     coord_flip() +
     theme_minimal()
 ```
-
-
-
-
-
-
-
-
-
 
