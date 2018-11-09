@@ -166,7 +166,7 @@ city_unsolved_cases %>%
 city_unsolved_cases %>% 
   mutate(city_state = fct_reorder(city_state, estimate)) %>% 
   ggplot(aes(x = city_state, y = estimate)) +
-    geom_point() +
+    geom_point(color = "darkslateblue") +
     geom_errorbar(aes(ymax = conf.high, ymin = conf.low)) +
     labs(x = "City, State", 
          y = "Proportion of Unsolved Homicides", 
@@ -175,13 +175,4 @@ city_unsolved_cases %>%
     coord_flip() +
     theme_minimal()
 ```
-
-
-
-
-
-
-
-
-
 
