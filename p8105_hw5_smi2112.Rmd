@@ -68,7 +68,7 @@ Comments: (on difference over time)
 ####Reading in the raw homicide data from the Washington Post
 
 ```{r}
-homicide_data <- read_csv("./data/homicide-data.csv") 
+homicide_data <- read_csv("./data/q2/homicide-data.csv") 
 ```
 
 About the raw data: (describe some stuff here)
@@ -154,7 +154,6 @@ city_unsolved_cases %>%
          "CI low" = conf.low, 
          "CI high" = conf.high) %>% 
   knitr::kable()
-
 ```
 
 ####Plotting estimates and CIs for each city
