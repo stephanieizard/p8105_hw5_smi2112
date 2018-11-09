@@ -107,14 +107,35 @@ inner_join(homicide_data_total, homicide_data_unsolved, by = "city_state") %>%
   knitr::kable()
 ```
 
-####Baltimore, MD: Proportion of unsolved homicides
+####Proportion of unsolved homicides for Baltimore, MD
 
 ```{r}
+md_only <- homicide_data %>% 
+  unnest() %>% 
+  filter(city_state == "Baltimore, MD") %>% 
+  mutate(case_status = recode(case_status, "unsolved" = 0, "solved" = 1))
+
+prop_test <- prop.test(table(md_only$case_status))
+
+prop_test %>% 
+  broom::tidy() %>% 
+  select(estimate, conf.low, conf.high) %>% 
+  rename("Proportion Unsolved" = estimate, 
+         "CI low" = conf.low, 
+         "CI high" = conf.high) %>% 
+  knitr::kable()
+```
+
+####Proportion of unsolved homicides for every city
+
+```{r}
+prop_test_fx <- function(df) {
+  prop_test_all <- prop.test(table(df$case_status))
+}
 
 
 
 ```
-
 
 ####Plotting estimates and CIs for each city
 
@@ -122,5 +143,13 @@ inner_join(homicide_data_total, homicide_data_unsolved, by = "city_state") %>%
 
 
 ```
+
+
+
+
+
+
+
+
 
 
